@@ -13,12 +13,16 @@ class NumberList implements Sortable {
   private numbers: number[] = [];
 
   // Constructs a NumberList object from a file
-  constructor(inputFile: string) {
+  constructor(inputFile: string, delimiter: string) {
     // Read the input file and split it into an array of number strings
     const file = fs.readFileSync(path.join(__dirname, inputFile), "utf-8");
-    const numStrings = file.split(", ");
+    const numStrings = file.split(delimiter);
     // Parse each string as an integer and add it to the numbers array
     this.numbers = numStrings.map((s) => parseInt(s, 10));
+  }
+
+    addNumbers(numbers: number[]) {
+    this.numbers.push(...numbers);
   }
 
   // Sorts the list of numbers in descending order by default
@@ -68,30 +72,58 @@ function main() {
     output: process.stdout,
   });
 
-  // Prompt the user for input
+  // Prompt the user for input file and delimiter
   rl.question("Enter the name of the input file (enter filename with extension like 'input.txt'): ", function (inputFile) {
-    // Create a new NumberList object from the input file
-    const numbers = new NumberList(inputFile);
+    rl.question("Enter the delimiter used in the input file: ", function (delimiter) {
+      // Create a new NumberList object from the input file
+      const numbers = new NumberList(inputFile, delimiter);
 
-    // Prompt the user for sorting order
-    rl.question("Enter the sorting order (1 for ascending, anything else for descending): ", function (order) {
-      // Sort the numbers in the specified order
-      numbers.sort(order === "1" ? "asc" : "desc");
+      // Prompt the user for sorting order
+      rl.question("Enter the sorting order (1 for ascending, anything else for descending): ", function (order) {
+        // Sort the numbers in the specified order
+        numbers.sort(order === "1" ? "asc" : "desc");
 
-      // Convert the sorted numbers to a string
-      const result = numbers.toString();
+        // Convert the sorted numbers to a string
+        const result = numbers.toString();
 
-      // Prompt the user for output file name
-      rl.question("Enter the name of the output file (default: output.txt): ", function (outputFile) {
-        rl.close();
-        // Use default name if no name provided
-        outputFile = outputFile || "output.txt";
-        // Write the sorted numbers to the output file
-        FileIO.writeOutputFile(outputFile, result);
+        // Prompt the user for output file name
+        rl.question("Enter the name of the output file (default: output.txt): ", function (outputFile) {
+          rl.close();
+          // Use default name if no name provided
+          outputFile = outputFile || "output.txt";
+          // Write the sorted numbers to the output file
+          FileIO.writeOutputFile(outputFile, result);
+        });
       });
     });
   });
 }
 
-// Call the main function to run the program
-main();
+// function performanceTest() {
+//   // Generate an array of 1 million random numbers
+//   const numbers = Array.from({ length: 1000000 }, () => Math.floor(Math.random() * 1000000));
+
+//   // Create a new NumberList object and add the numbers to it
+//   const numberList = new NumberList("","");
+//   numberList.addNumbers(numbers);
+
+//   // Record the start time
+//   const startTime = Date.now();
+
+//   // Sort the number list
+//   numberList.sort();
+
+//   // Record the end time
+//   const endTime = Date.now();
+
+//   // Calculate the duration of the sort in milliseconds
+//   const duration = endTime - startTime;
+
+//   console.log(`Sorted 1 million numbers in ${duration} ms`);
+// }
+
+
+
+main()
+// performanceTest() 
+    
